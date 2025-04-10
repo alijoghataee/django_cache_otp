@@ -1,10 +1,9 @@
 from django.core.cache import cache
 
-from django_cache_otp.modules import generate_random_otp, encrypt_otp, decrypt_otp, check_cache
+from django_cache_otp.modules import generate_random_otp, encrypt_otp, decrypt_otp
 
 
 def generate_otp(username: str, otp_length: int = 6, timeout: int = 60) -> int:
-    check_cache()
     otp = generate_random_otp(otp_length)
     encrypted_otp = encrypt_otp(otp)
     cache.set(username, encrypted_otp, timeout=timeout)

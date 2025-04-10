@@ -6,8 +6,6 @@ from random import choices
 
 from django.conf import settings
 
-from django_cache_otp.exceptions import CacheNotConfiguredError
-
 
 def generate_random_otp(int_length: int) -> int:
     random_otp = ''.join(choices(string.digits, k=int_length))
@@ -34,9 +32,3 @@ def decrypt_otp(encrypted_otp) -> int:
     fernet = Fernet(generate_key())
     decrypted_otp = fernet.decrypt(encrypted_otp).decode()
     return int(decrypted_otp)
-
-
-def check_cache():
-    # Check if the 'CACHES' setting exists and has a 'default' configuration
-    if not hasattr(settings, 'CACHES') or 'default' not in settings.CACHES:
-        raise CacheNotConfiguredError()
