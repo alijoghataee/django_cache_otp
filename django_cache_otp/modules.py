@@ -1,14 +1,14 @@
 import base64
+import secrets
 
 from cryptography.fernet import Fernet
 import string
-from random import choices
 
 from django.conf import settings
 
 
 def generate_random_otp(int_length: int) -> int:
-    random_otp = ''.join(choices(string.digits, k=int_length))
+    random_otp = ''.join(secrets.choice(string.digits) for _ in range(int_length))
     return int(random_otp)
 
 
