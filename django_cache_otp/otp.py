@@ -3,7 +3,14 @@ from django.core.cache import cache
 from django_cache_otp.modules import generate_random_otp, encrypt_otp, decrypt_otp
 
 
-def generate_otp(username: str, otp_length: int = 6, timeout: int = 60) -> int:
+def generate_otp(username: str, otp_length: int = 6, timeout: int = 60, skip_if_exists: bool = False) -> int or None:
+    """
+        skip_if_exists is a boolean that indicates whether to skip OTP creation if it already exists.
+    """
+    if skip_if_exists:
+        if cache.get(username):
+            return
+
     otp = generate_random_otp(otp_length)
     encrypted_otp = encrypt_otp(otp)
     cache.set(username, encrypted_otp, timeout=timeout)
