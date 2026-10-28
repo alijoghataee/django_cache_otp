@@ -7,9 +7,8 @@ import string
 from django.conf import settings
 
 
-def generate_random_otp(int_length: int) -> int:
-    random_otp = ''.join(secrets.choice(string.digits) for _ in range(int_length))
-    return int(random_otp)
+def generate_random_otp(int_length: int) -> str:
+    return ''.join(secrets.choice(string.digits) for _ in range(int_length))
 
 
 def generate_key() -> bytes:
@@ -28,7 +27,6 @@ def encrypt_otp(otp) -> str:
     return encrypted_otp
 
 
-def decrypt_otp(encrypted_otp) -> int:
+def decrypt_otp(encrypted_otp) -> str:
     fernet = Fernet(generate_key())
-    decrypted_otp = fernet.decrypt(encrypted_otp).decode()
-    return int(decrypted_otp)
+    return fernet.decrypt(encrypted_otp).decode()

@@ -1,5 +1,3 @@
-from build.lib.django_cache_otp.decorators import skip_if_existsfrom django_cache_otp import generate_otp
-
 # django-cache-otp
 
 A simple Django package for generating and validating OTPs using Django's cache framework.
@@ -37,15 +35,34 @@ CACHES = {
 ```python
 from django_cache_otp import generate_otp, validate_otp
 
-otp = generate_otp("username", otp_length=6, timeout=60)  # Example: 123456, valid for 60 seconds
+otp = generate_otp("username", otp_length=6, timeout=60)  # Example: "012345", valid for 60 seconds
 is_valid = validate_otp("username", otp)  # Returns True or False
 ```
+The OTP is a string, so leading zeros are kept.
+
 if you want to not generate new OTP when username already has one:
 
 ```python
 otp = generate_otp("username", otp_length=6, timeout=60, skip_if_exists=True)
 # return None if username already has an OTP
 ```
+
+### Rate limiting
+`generate_otp` takes `rate_limit` (seconds, default `60`): the minimum time between generating OTPs for the same username. A call made sooner returns `None`.
+
+```python
+otp = generate_otp("username", rate_limit=120)  # at most one OTP per 2 minutes
+```
+
+`validate_otp` takes two options:
+* `rate_limit` (seconds, default `5`): the minimum time between attempts. An attempt made sooner returns `False` without being checked.
+* `invalid_after_failure` (count, default `3`): the OTP is invalidated after this many failed attempts. A new OTP has to be generated after that.
+
+```python
+is_valid = validate_otp("username", otp, rate_limit=5, invalid_after_failure=3)
+```
+
+Pass `0` to any of these options to disable it.
 
 
 ## Features
